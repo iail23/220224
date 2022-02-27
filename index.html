@@ -8,8 +8,8 @@
         <meta name="apple-mobile-web-app-capable" content="yes">
         <link rel="stylesheet" href="css/leaflet.css">
         <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
-        <link rel="stylesheet" href="css/leaflet-search.css">
-        <link rel="stylesheet" href="css/leaflet-control-geocoder.Geocoder.css">
+        <link rel="stylesheet" href="css/MarkerCluster.css">
+        <link rel="stylesheet" href="css/MarkerCluster.Default.css">
         <link rel="stylesheet" href="css/leaflet-measure.css">
         <style>
         #map {
@@ -25,7 +25,6 @@
         <script src="js/qgis2web_expressions.js"></script>
         <script src="js/leaflet.js"></script>
         <script src="js/multi-style-layer.js"></script>
-        <script src="js/leaflet-svg-shape-markers.min.js"></script>
         <script src="js/leaflet.rotatedMarker.js"></script>
         <script src="js/leaflet.pattern.js"></script>
         <script src="js/leaflet-hash.js"></script>
@@ -33,9 +32,10 @@
         <script src="js/rbush.min.js"></script>
         <script src="js/labelgun.min.js"></script>
         <script src="js/labels.js"></script>
-        <script src="js/leaflet-control-geocoder.Geocoder.js"></script>
         <script src="js/leaflet-measure.js"></script>
-        <script src="js/leaflet-search.js"></script>
+        <script src="js/proj4.js"></script>
+        <script src="js/proj4leaflet.js"></script>
+        <script src="js/leaflet.markercluster.js"></script>
         <script src="data/Cananea_2.js"></script>
         <script src="data/Zonaurbana_3.js"></script>
         <script src="data/Viasferreas_4.js"></script>
@@ -44,19 +44,27 @@
         <script src="data/Lineasdeconduccion_7.js"></script>
         <script src="data/Tanques_8.js"></script>
         <script src="data/Sistemasdepozos_9.js"></script>
-        <script src="data/220224_Fotos_10.js"></script>
-        <script src="data/220224_Basededatoscompleta_11.js"></script>
-        <script src="data/220224_Fugas_12.js"></script>
-        <script src="data/220224_Valvulas_13.js"></script>
+        <script src="data/220227_Tomasdomiciliarias_10.js"></script>
+        <script src="data/220227_Cajadevalvulas_11.js"></script>
+        <script src="data/220227_Fugas_12.js"></script>
+        <script src="data/220227_Valvulas_13.js"></script>
+        <script src="data/220227_Fotografias_14.js"></script>
+        <script src="data/220227_VRP_15.js"></script>
         <script>
         var highlightLayer;
         function highlightFeature(e) {
             highlightLayer = e.target;
             highlightLayer.openPopup();
         }
+        var crs = new L.Proj.CRS('EPSG:32612', '+proj=utm +zone=12 +datum=WGS84 +units=m +no_defs', {
+            resolutions: [2800, 1400, 700, 350, 175, 84, 42, 21, 11.2, 5.6, 2.8, 1.4, 0.7, 0.35, 0.14, 0.07],
+        });
         var map = L.map('map', {
+            crs: crs,
+            continuousWorld: false,
+            worldCopyJump: false, 
             zoomControl:true, maxZoom:28, minZoom:1
-        }).fitBounds([[30.96284038785432,-110.33197490578405],[31.00503204871349,-110.23792775194163]]);
+        }).fitBounds([[30.969759517121656,-110.32755053183573],[31.011158565017343,-110.23526804863425]]);
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
@@ -164,14 +172,14 @@
             return {
                 pane: 'pane_Zonaurbana_3',
                 opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
+                color: 'rgba(245,237,8,1.0)',
                 dashArray: '',
                 lineCap: 'butt',
                 lineJoin: 'miter',
                 weight: 1.0, 
                 fill: true,
                 fillOpacity: 1,
-                fillColor: 'rgba(18,14,4,0.3764705882352941)',
+                fillColor: 'rgba(18,14,4,0.0)',
                 interactive: true,
             }
         }
@@ -399,7 +407,7 @@
         rotationAngle: 0.0,
         rotationOrigin: 'center center',
         icon: L.icon({
-            iconUrl: 'markers/poi_tower_water.svg',
+            iconUrl: 'markers/shopping_convenience.svg',
             iconSize: [57.0, 57.0]
         }),
                 interactive: true,
@@ -443,12 +451,16 @@
         function style_Sistemasdepozos_9_0() {
             return {
                 pane: 'pane_Sistemasdepozos_9',
-        rotationAngle: 0.0,
-        rotationOrigin: 'center center',
-        icon: L.icon({
-            iconUrl: 'markers/tourisum_fountain.svg',
-            iconSize: [25.08, 25.08]
-        }),
+                radius: 8.0,
+                opacity: 1,
+                color: 'rgba(247,225,55,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 2.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(250,255,57,1.0)',
                 interactive: true,
             }
         }
@@ -467,12 +479,12 @@
                     feature: feature,
                     variables: {}
                 };
-                return L.marker(latlng, style_Sistemasdepozos_9_0(feature));
+                return L.circleMarker(latlng, style_Sistemasdepozos_9_0(feature));
             },
         });
         bounds_group.addLayer(layer_Sistemasdepozos_9);
         map.addLayer(layer_Sistemasdepozos_9);
-        function pop_220224_Fotos_10(feature, layer) {
+        function pop_220227_Tomasdomiciliarias_10(feature, layer) {
             layer.on({
                 mouseout: function(e) {
                     if (typeof layer.closePopup == 'function') {
@@ -485,40 +497,65 @@
                 },
                 mouseover: highlightFeature,
             });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>ID</strong><br />' + (feature.properties['ID'] !== null ? autolinker.link(feature.properties['ID'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>X UTM</strong><br />' + (feature.properties['X UTM'] !== null ? autolinker.link(feature.properties['X UTM'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Y UTM</strong><br />' + (feature.properties['Y UTM'] !== null ? autolinker.link(feature.properties['Y UTM'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Z Real</strong><br />' + (feature.properties['Z Real'] !== null ? autolinker.link(feature.properties['Z Real'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Descripci�</strong><br />' + (feature.properties['Descripci�'] !== null ? autolinker.link(feature.properties['Descripci�'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Descripc_1</strong><br />' + (feature.properties['Descripc_1'] !== null ? autolinker.link(feature.properties['Descripc_1'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
         }
 
-        function style_220224_Fotos_10_0() {
+        function style_220227_Tomasdomiciliarias_10_0() {
             return {
-                pane: 'pane_220224_Fotos_10',
+                pane: 'pane_220227_Tomasdomiciliarias_10',
         rotationAngle: 0.0,
         rotationOrigin: 'center center',
         icon: L.icon({
-            iconUrl: 'markers/camera.svg',
-            iconSize: [20.52, 20.52]
+            iconUrl: 'markers/food_drinkingtap.svg',
+            iconSize: [19.76, 19.76]
         }),
                 interactive: true,
             }
         }
-        map.createPane('pane_220224_Fotos_10');
-        map.getPane('pane_220224_Fotos_10').style.zIndex = 410;
-        map.getPane('pane_220224_Fotos_10').style['mix-blend-mode'] = 'normal';
-        var layer_220224_Fotos_10 = new L.geoJson(json_220224_Fotos_10, {
+        map.createPane('pane_220227_Tomasdomiciliarias_10');
+        map.getPane('pane_220227_Tomasdomiciliarias_10').style.zIndex = 410;
+        map.getPane('pane_220227_Tomasdomiciliarias_10').style['mix-blend-mode'] = 'normal';
+        var layer_220227_Tomasdomiciliarias_10 = new L.geoJson(json_220227_Tomasdomiciliarias_10, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_220224_Fotos_10',
-            layerName: 'layer_220224_Fotos_10',
-            pane: 'pane_220224_Fotos_10',
-            onEachFeature: pop_220224_Fotos_10,
+            dataVar: 'json_220227_Tomasdomiciliarias_10',
+            layerName: 'layer_220227_Tomasdomiciliarias_10',
+            pane: 'pane_220227_Tomasdomiciliarias_10',
+            onEachFeature: pop_220227_Tomasdomiciliarias_10,
             pointToLayer: function (feature, latlng) {
                 var context = {
                     feature: feature,
                     variables: {}
                 };
-                return L.marker(latlng, style_220224_Fotos_10_0(feature));
+                return L.marker(latlng, style_220227_Tomasdomiciliarias_10_0(feature));
             },
         });
-        bounds_group.addLayer(layer_220224_Fotos_10);
-        function pop_220224_Basededatoscompleta_11(feature, layer) {
+        var cluster_220227_Tomasdomiciliarias_10 = new L.MarkerClusterGroup({showCoverageOnHover: false,
+            spiderfyDistanceMultiplier: 2});
+        cluster_220227_Tomasdomiciliarias_10.addLayer(layer_220227_Tomasdomiciliarias_10);
+
+        bounds_group.addLayer(layer_220227_Tomasdomiciliarias_10);
+        function pop_220227_Cajadevalvulas_11(feature, layer) {
             layer.on({
                 mouseout: function(e) {
                     if (typeof layer.closePopup == 'function') {
@@ -531,3120 +568,61 @@
                 },
                 mouseover: highlightFeature,
             });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>ID</strong><br />' + (feature.properties['ID'] !== null ? autolinker.link(feature.properties['ID'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>X UTM</strong><br />' + (feature.properties['X UTM'] !== null ? autolinker.link(feature.properties['X UTM'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Y UTM</strong><br />' + (feature.properties['Y UTM'] !== null ? autolinker.link(feature.properties['Y UTM'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Z Real</strong><br />' + (feature.properties['Z Real'] !== null ? autolinker.link(feature.properties['Z Real'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Descripci�</strong><br />' + (feature.properties['Descripci�'] !== null ? autolinker.link(feature.properties['Descripci�'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Descripc_1</strong><br />' + (feature.properties['Descripc_1'] !== null ? autolinker.link(feature.properties['Descripc_1'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
         }
 
-        function style_220224_Basededatoscompleta_11_0(feature) {
-            switch(String(feature.properties['Descripci�'])) {
-                case '"T" conduccion Fortin-Riito':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(201,108,206,1.0)',
+        function style_220227_Cajadevalvulas_11_0() {
+            return {
+                pane: 'pane_220227_Cajadevalvulas_11',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/background_tilted_square_rounded.svg',
+            iconSize: [22.80000000000001, 22.80000000000001]
+        }),
                 interactive: true,
-            }
-                    break;
-                case 'Alta tension':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(214,177,30,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Ampliacion 6"-8"-10"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(122,110,200,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Antena de telefonia':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(126,232,165,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Atraque':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(200,67,52,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'By-pass':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(210,61,98,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'C.V. Reguladora':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(77,80,235,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Caja amarilla':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(135,27,218,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Caja de valvula reguladora':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(178,227,123,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Caja de valvulas':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(236,69,92,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Caja de valvulas azolvada':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(226,92,30,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Caja de valvulas de 4"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(83,215,217,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Caja de valvulas doble':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(70,219,92,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Caja de valvulas inundada':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(111,141,203,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Caja de valvulas obsoleta':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(198,224,54,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Caja valvulas de 3" P.V.C':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(206,209,17,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Calle':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(64,234,70,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Cambio de diametro':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(141,200,59,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Cambio de material de conduccion ojo de agua de fibra de vidrio a fierro y cambio de diametro de 18" a 16':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(111,216,235,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Centro de calle':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(44,68,223,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Centro de Calle':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(101,71,219,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Colector pluvial':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(183,218,108,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Conduccion al fortin':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(210,58,91,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Conduccion al fortin cancelada':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(152,44,206,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Conduccion al sector hidrometrico 28':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(205,84,126,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Conduccion ojo de agua':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(216,108,178,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Conduccion Rio San Pedro':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(180,95,211,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Conexion':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(71,79,236,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Conexion de 1" a 3/4"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(172,100,230,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Conexion de 4" a 3"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(148,224,82,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Conexion de fofo a pvc 3"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(175,212,106,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Conexiones':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(201,33,123,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Conexi�n de PVC 1 1/2" a FoFo 1 1/2"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(112,230,108,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Cuartel esquina':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(158,15,220,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Descarga sanitaria':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(41,56,221,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Descarga sanitaria 4"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(88,185,207,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Dren':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(130,222,159,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Drenaje':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(170,108,206,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Drenaje da�ado':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(207,129,41,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Drenaje pluvial':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(99,212,47,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Drenaje sanitario':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(133,233,187,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Equipo de medicion':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(196,209,99,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Escalinata':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(104,211,85,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Excavacion':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(35,222,144,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Fina de calle':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(99,34,237,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Fuga de agua':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(121,221,230,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Fuga de agua en linea de conduccion':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(230,109,82,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Fuga de agua en PVC 1/2"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(206,117,114,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Fuga de drenaje':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(228,240,100,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Fuga en linea de agua 2"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(77,216,177,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Fuga en linea de agua 3"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(73,43,224,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Fuga en reparacion':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(212,65,24,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Fuga en toma domiciliaria':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(231,65,225,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Gas':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(221,72,235,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'GAs':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(226,64,164,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Gas medidor':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(211,76,31,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Gas natural':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(233,38,194,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Guarnicion':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(59,203,174,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Hidrante':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(236,128,182,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Hidrante F.S':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(102,224,196,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Interseccion de pozo No. 10, 8" a linea de conduccion a 12"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(99,204,76,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Interseccion de pozo No. 2, 8" a linea de conduccionn a 12"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(200,114,56,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Interseccion de pozo No. 3 BIS, 6" a linea de conduccion a 12"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(167,200,37,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Interseccion de pozo No. 5, 8" a linea de conduccion a 12"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(224,133,126,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Interseccion de pozo No. 9 BIS, 4" a linea de conduccion a 12"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(229,163,70,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Interseccion pozo No. 7, 4" a linea de conduccion a 12"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(45,79,213,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Legada Riito':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(131,175,230,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Linea 4"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(87,209,215,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Linea Conduccion':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(153,96,222,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Linea Conduccion 16"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(219,70,80,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Linea conduccion de fibra 18"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(232,158,39,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Linea conduccion de fibra final 18"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(228,132,84,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Linea conduccion de fibra inicio 18"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(213,121,41,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Linea de 1 1/2"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(125,211,116,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Linea de 1"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(41,220,163,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Linea de 12"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(79,208,150,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Linea de 4"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(121,66,210,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Linea de agua':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(74,215,210,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Linea de agua 1 1/2"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(215,67,215,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Linea de agua de 2"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(29,109,238,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Linea de agua en vialidad':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(231,195,105,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Linea de conduccion':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(213,210,124,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Linea de conduccion 10"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(78,162,204,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Linea de conduccion 12"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(212,14,199,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Linea de conduccion 16"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(145,234,101,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Linea de conduccion 2" FoFo':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(229,59,212,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Linea de conduccion 2"PVC':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(221,96,47,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Linea de conduccion 3/4" galv':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(239,161,102,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Linea de conduccion 3/4" PVC':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(34,17,223,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Linea de conduccion Gas':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(108,120,210,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Linea de conduccion PVC 2"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(168,232,119,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Linea de distribicion para tomas sobre carretera Rio Sonora':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(31,223,191,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Linea de drenaje':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(238,66,201,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Linea de fierro de 1"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(23,213,146,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Linea de gas':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(224,45,51,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Linea de gas F.S':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(205,176,121,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Linea de PVC 1 1/2"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(138,230,102,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Linea deconduccion':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(144,236,138,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Linea P.V.C. 3/4"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(67,197,237,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Linea pozo 1-2':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(127,214,156,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Linea pozo 2-3':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(200,130,222,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Linea pozo 3-4':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(212,84,125,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Linea PVC 1 1/2"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(235,130,116,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Linea PVC 1"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(120,38,208,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Linea PVC 2"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(71,212,158,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Lote valdio':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(111,43,237,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'M.F':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(201,190,91,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Malla perimetral':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(76,224,222,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Manometro':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(68,230,97,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Medidor de flujo':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(212,96,175,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Medidor de flujo ojo de agua':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(182,228,15,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'PA.':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(177,222,40,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Paramento':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(229,123,153,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Perdida de presion':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(229,235,123,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Perimetro de tanque':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(29,206,47,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Posible Valvula':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(151,125,211,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Poste':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(211,84,84,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Poste CFE':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(91,55,209,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Poste de alumbrado':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(138,65,207,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Poste de luz':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(82,133,228,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Pozo 3 a linea principal':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(133,221,152,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Pozo 4 a linea principal':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(235,147,40,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Pozo de visita':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(25,224,197,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Reduccion a valvula 10"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(55,208,13,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Reduccion de conduccion ojo de agua 16" a 12"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(219,158,27,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Reductor de presion':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(34,77,220,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Registro':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(230,35,181,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Registro alumbrado':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(145,113,231,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Registro CFE':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(146,237,55,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Registro pluvial':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(37,17,224,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Registro sanitario':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(212,72,133,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Registro Telmex':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(23,236,183,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Reparacion':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(160,205,47,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Salida pozo 2':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(209,206,57,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Salida Pozo No.1, Ampliacion de 6"-8"-10"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(40,73,237,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Salida Pozo No.10, 8"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(225,58,156,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Salida Pozo No.11, 6"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(129,232,174,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Salida Pozo No.2, 8"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(41,227,115,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Salida Pozo No.3, 6"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(84,137,211,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Salida Pozo No.4, 8"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(168,27,200,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Salida Pozo No.6, 8"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(234,129,111,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Salida Pozo No.7, 4"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(18,215,31,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Salida Pozo No.8, 8"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(45,235,45,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Salida Pozo No.9 BIS, 4"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(229,115,214,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Se�alamiento de tuberia de gas':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(162,214,78,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Toma 1 1/2" a 1/2" PVC':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(238,187,21,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Toma agua 1"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(159,77,213,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Toma alimentacion':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(235,205,113,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Toma de agua 1 1/2"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(53,235,217,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Toma de agua 4" a 1/2"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(215,97,236,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Toma de agua N.V':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(47,188,207,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Toma de agua N.V.':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(212,48,125,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Toma de agua NV':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(239,226,50,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Toma de gas':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(111,222,37,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Toma de gas F.S':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(138,230,149,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Toma dentro de terreno':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(50,209,95,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Toma domiciliaria':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(50,90,200,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Toma domiciliaria azolvada':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(235,59,77,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Toma domiciliaria clausurada':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(39,142,202,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Toma domiciliaria en proceso':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(51,218,207,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Toma domiciliaria F.S':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(74,71,239,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Toma domiciliaria NV':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(28,169,220,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Transformador':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(86,223,150,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Tuberia':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(96,203,149,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Tuberia de 1 1/2"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(96,191,232,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Tuberia de 12"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(231,33,62,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Tuberia de 16"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(94,13,208,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Tuberia de 2"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(49,152,231,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Tuberia de 3"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(238,177,142,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Tuberia de 4"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(52,191,229,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Tuberia de asbesto':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(41,128,221,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Tuberia de fierro 2"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(231,206,40,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Tuberia de fierro de 1"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(232,90,142,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Tuberia de gas':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(228,151,74,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Tuberia de PVC 3"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(240,42,184,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Tuberia de PVC 8"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(105,159,210,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Union pozo 2 a linea principal':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(24,121,200,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'V.R.P de 4"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(218,79,134,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Valdio':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(94,215,125,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Valvula':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(76,68,230,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Valvula 8"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(230,46,233,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Valvula conduccion ojo de agua':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(158,227,135,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Valvula de 12"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(159,203,102,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Valvula de 2" expuesta':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(116,232,101,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Valvula de desfoge 3"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(206,65,225,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Valvula de expulsion de aire 3"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(52,104,223,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Valvula de expulsion de aire ojo de agua':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(226,51,197,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Valvula de paso':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(22,134,209,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Valvula de PVC de 4"':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(217,26,134,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Valvula expuesta':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(216,195,91,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Valvula linea de distribucion':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(138,225,87,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Vialidad':
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(176,29,217,1.0)',
-                interactive: true,
-            }
-                    break;
-                default:
-                    return {
-                pane: 'pane_220224_Basededatoscompleta_11',
-                radius: 4.0,
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(217,125,142,1.0)',
-                interactive: true,
-            }
-                    break;
             }
         }
-        map.createPane('pane_220224_Basededatoscompleta_11');
-        map.getPane('pane_220224_Basededatoscompleta_11').style.zIndex = 411;
-        map.getPane('pane_220224_Basededatoscompleta_11').style['mix-blend-mode'] = 'normal';
-        var layer_220224_Basededatoscompleta_11 = new L.geoJson(json_220224_Basededatoscompleta_11, {
+        map.createPane('pane_220227_Cajadevalvulas_11');
+        map.getPane('pane_220227_Cajadevalvulas_11').style.zIndex = 411;
+        map.getPane('pane_220227_Cajadevalvulas_11').style['mix-blend-mode'] = 'normal';
+        var layer_220227_Cajadevalvulas_11 = new L.geoJson(json_220227_Cajadevalvulas_11, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_220224_Basededatoscompleta_11',
-            layerName: 'layer_220224_Basededatoscompleta_11',
-            pane: 'pane_220224_Basededatoscompleta_11',
-            onEachFeature: pop_220224_Basededatoscompleta_11,
+            dataVar: 'json_220227_Cajadevalvulas_11',
+            layerName: 'layer_220227_Cajadevalvulas_11',
+            pane: 'pane_220227_Cajadevalvulas_11',
+            onEachFeature: pop_220227_Cajadevalvulas_11,
             pointToLayer: function (feature, latlng) {
                 var context = {
                     feature: feature,
                     variables: {}
                 };
-                return L.circleMarker(latlng, style_220224_Basededatoscompleta_11_0(feature));
+                return L.marker(latlng, style_220227_Cajadevalvulas_11_0(feature));
             },
         });
-        bounds_group.addLayer(layer_220224_Basededatoscompleta_11);
-        function pop_220224_Fugas_12(feature, layer) {
+        bounds_group.addLayer(layer_220227_Cajadevalvulas_11);
+        function pop_220227_Fugas_12(feature, layer) {
             layer.on({
                 mouseout: function(e) {
                     if (typeof layer.closePopup == 'function') {
@@ -3657,330 +635,61 @@
                 },
                 mouseover: highlightFeature,
             });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>ID</strong><br />' + (feature.properties['ID'] !== null ? autolinker.link(feature.properties['ID'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>X UTM</strong><br />' + (feature.properties['X UTM'] !== null ? autolinker.link(feature.properties['X UTM'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Y UTM</strong><br />' + (feature.properties['Y UTM'] !== null ? autolinker.link(feature.properties['Y UTM'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Z Real</strong><br />' + (feature.properties['Z Real'] !== null ? autolinker.link(feature.properties['Z Real'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Descripci�</strong><br />' + (feature.properties['Descripci�'] !== null ? autolinker.link(feature.properties['Descripci�'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Descripc_1</strong><br />' + (feature.properties['Descripc_1'] !== null ? autolinker.link(feature.properties['Descripc_1'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
         }
 
-        function style_220224_Fugas_12_0(feature) {
-            switch(String(feature.properties['Descripci�'])) {
-                case 'Fuga de agua':
-                    return {
-                pane: 'pane_220224_Fugas_12',
-                radius: 13.2,
-                opacity: 1,
-                color: 'rgba(184,8,8,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1.0,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(151,224,125,1.0)',
+        function style_220227_Fugas_12_0() {
+            return {
+                pane: 'pane_220227_Fugas_12',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/flag.svg',
+            iconSize: [30.40000000000002, 30.40000000000002]
+        }),
                 interactive: true,
-            }
-                    break;
-                case 'Fuga de agua en linea de conduccion':
-                    return {
-                pane: 'pane_220224_Fugas_12',
-                radius: 13.2,
-                opacity: 1,
-                color: 'rgba(184,8,8,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1.0,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(138,227,233,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Fuga de agua en PVC 1/2"':
-                    return {
-                pane: 'pane_220224_Fugas_12',
-                radius: 13.2,
-                opacity: 1,
-                color: 'rgba(184,8,8,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1.0,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(62,103,216,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Fuga de drenaje':
-                    return {
-                pane: 'pane_220224_Fugas_12',
-                radius: 13.2,
-                opacity: 1,
-                color: 'rgba(184,8,8,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1.0,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(24,215,101,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Fuga en linea de agua 2"':
-                    return {
-                pane: 'pane_220224_Fugas_12',
-                radius: 13.2,
-                opacity: 1,
-                color: 'rgba(184,8,8,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1.0,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(213,110,47,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Fuga en linea de agua 3"':
-                    return {
-                pane: 'pane_220224_Fugas_12',
-                radius: 13.2,
-                opacity: 1,
-                color: 'rgba(184,8,8,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1.0,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(214,59,204,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Fuga en reparacion':
-                    return {
-                pane: 'pane_220224_Fugas_12',
-                radius: 13.2,
-                opacity: 1,
-                color: 'rgba(184,8,8,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1.0,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(203,213,17,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Fuga en toma domiciliaria':
-                    return {
-                pane: 'pane_220224_Fugas_12',
-                radius: 13.2,
-                opacity: 1,
-                color: 'rgba(184,8,8,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1.0,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(225,67,112,1.0)',
-                interactive: true,
-            }
-                    break;
-                default:
-                    return {
-                pane: 'pane_220224_Fugas_12',
-                radius: 13.2,
-                opacity: 1,
-                color: 'rgba(184,8,8,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1.0,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(163,125,221,1.0)',
-                interactive: true,
-            }
-                    break;
             }
         }
-        function style_220224_Fugas_12_1(feature) {
-            switch(String(feature.properties['Descripci�'])) {
-                case 'Fuga de agua':
-                    return {
-                pane: 'pane_220224_Fugas_12',
-                radius: 14.4,
-                opacity: 1,
-                color: 'rgba(255,0,0,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1.0,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(151,224,125,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Fuga de agua en linea de conduccion':
-                    return {
-                pane: 'pane_220224_Fugas_12',
-                radius: 14.4,
-                opacity: 1,
-                color: 'rgba(255,0,0,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1.0,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(138,227,233,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Fuga de agua en PVC 1/2"':
-                    return {
-                pane: 'pane_220224_Fugas_12',
-                radius: 14.4,
-                opacity: 1,
-                color: 'rgba(255,0,0,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1.0,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(62,103,216,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Fuga de drenaje':
-                    return {
-                pane: 'pane_220224_Fugas_12',
-                radius: 14.4,
-                opacity: 1,
-                color: 'rgba(255,0,0,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1.0,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(24,215,101,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Fuga en linea de agua 2"':
-                    return {
-                pane: 'pane_220224_Fugas_12',
-                radius: 14.4,
-                opacity: 1,
-                color: 'rgba(255,0,0,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1.0,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(213,110,47,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Fuga en linea de agua 3"':
-                    return {
-                pane: 'pane_220224_Fugas_12',
-                radius: 14.4,
-                opacity: 1,
-                color: 'rgba(255,0,0,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1.0,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(214,59,204,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Fuga en reparacion':
-                    return {
-                pane: 'pane_220224_Fugas_12',
-                radius: 14.4,
-                opacity: 1,
-                color: 'rgba(255,0,0,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1.0,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(203,213,17,1.0)',
-                interactive: true,
-            }
-                    break;
-                case 'Fuga en toma domiciliaria':
-                    return {
-                pane: 'pane_220224_Fugas_12',
-                radius: 14.4,
-                opacity: 1,
-                color: 'rgba(255,0,0,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1.0,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(225,67,112,1.0)',
-                interactive: true,
-            }
-                    break;
-                default:
-                    return {
-                pane: 'pane_220224_Fugas_12',
-                radius: 14.4,
-                opacity: 1,
-                color: 'rgba(255,0,0,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1.0,
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(163,125,221,1.0)',
-                interactive: true,
-            }
-                    break;
-            }
-        }
-        map.createPane('pane_220224_Fugas_12');
-        map.getPane('pane_220224_Fugas_12').style.zIndex = 412;
-        map.getPane('pane_220224_Fugas_12').style['mix-blend-mode'] = 'normal';
-        var layer_220224_Fugas_12 = new L.geoJson.multiStyle(json_220224_Fugas_12, {
+        map.createPane('pane_220227_Fugas_12');
+        map.getPane('pane_220227_Fugas_12').style.zIndex = 412;
+        map.getPane('pane_220227_Fugas_12').style['mix-blend-mode'] = 'normal';
+        var layer_220227_Fugas_12 = new L.geoJson(json_220227_Fugas_12, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_220224_Fugas_12',
-            layerName: 'layer_220224_Fugas_12',
-            pane: 'pane_220224_Fugas_12',
-            onEachFeature: pop_220224_Fugas_12,
-            pointToLayers: [function (feature, latlng) {
+            dataVar: 'json_220227_Fugas_12',
+            layerName: 'layer_220227_Fugas_12',
+            pane: 'pane_220227_Fugas_12',
+            onEachFeature: pop_220227_Fugas_12,
+            pointToLayer: function (feature, latlng) {
                 var context = {
                     feature: feature,
                     variables: {}
                 };
-                return L.shapeMarker(latlng, style_220224_Fugas_12_0(feature));
-            },function (feature, latlng) {
-                var context = {
-                    feature: feature,
-                    variables: {}
-                };
-                return L.shapeMarker(latlng, style_220224_Fugas_12_1(feature));
+                return L.marker(latlng, style_220227_Fugas_12_0(feature));
             },
-        ]});
-        bounds_group.addLayer(layer_220224_Fugas_12);
-        function pop_220224_Valvulas_13(feature, layer) {
+        });
+        bounds_group.addLayer(layer_220227_Fugas_12);
+        function pop_220227_Valvulas_13(feature, layer) {
             layer.on({
                 mouseout: function(e) {
                     if (typeof layer.closePopup == 'function') {
@@ -3993,163 +702,185 @@
                 },
                 mouseover: highlightFeature,
             });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>ID</strong><br />' + (feature.properties['ID'] !== null ? autolinker.link(feature.properties['ID'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>X UTM</strong><br />' + (feature.properties['X UTM'] !== null ? autolinker.link(feature.properties['X UTM'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Y UTM</strong><br />' + (feature.properties['Y UTM'] !== null ? autolinker.link(feature.properties['Y UTM'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Z Real</strong><br />' + (feature.properties['Z Real'] !== null ? autolinker.link(feature.properties['Z Real'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Descripci�</strong><br />' + (feature.properties['Descripci�'] !== null ? autolinker.link(feature.properties['Descripci�'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Descripc_1</strong><br />' + (feature.properties['Descripc_1'] !== null ? autolinker.link(feature.properties['Descripc_1'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
         }
 
-        function style_220224_Valvulas_13_0(feature) {
-            switch(String(feature.properties['Descripci�'])) {
-                case 'Caja amarilla':
-                    return {
-                pane: 'pane_220224_Valvulas_13',
+        function style_220227_Valvulas_13_0() {
+            return {
+                pane: 'pane_220227_Valvulas_13',
         rotationAngle: 0.0,
         rotationOrigin: 'center center',
         icon: L.icon({
             iconUrl: 'markers/Valvulas.svg',
-            iconSize: [38.0, 38.0]
+            iconSize: [26.600000000000016, 26.600000000000016]
         }),
                 interactive: true,
-            }
-                    break;
-                case 'Caja de valvula reguladora':
-                    return {
-                pane: 'pane_220224_Valvulas_13',
-        rotationAngle: 0.0,
-        rotationOrigin: 'center center',
-        icon: L.icon({
-            iconUrl: 'markers/Valvulas.svg',
-            iconSize: [38.0, 38.0]
-        }),
-                interactive: true,
-            }
-                    break;
-                case 'Caja de valvulas':
-                    return {
-                pane: 'pane_220224_Valvulas_13',
-        rotationAngle: 0.0,
-        rotationOrigin: 'center center',
-        icon: L.icon({
-            iconUrl: 'markers/Valvulas.svg',
-            iconSize: [38.0, 38.0]
-        }),
-                interactive: true,
-            }
-                    break;
-                case 'Caja de valvulas azolvada':
-                    return {
-                pane: 'pane_220224_Valvulas_13',
-        rotationAngle: 0.0,
-        rotationOrigin: 'center center',
-        icon: L.icon({
-            iconUrl: 'markers/Valvulas.svg',
-            iconSize: [38.0, 38.0]
-        }),
-                interactive: true,
-            }
-                    break;
-                case 'Caja de valvulas de 4"':
-                    return {
-                pane: 'pane_220224_Valvulas_13',
-        rotationAngle: 0.0,
-        rotationOrigin: 'center center',
-        icon: L.icon({
-            iconUrl: 'markers/Valvulas.svg',
-            iconSize: [38.0, 38.0]
-        }),
-                interactive: true,
-            }
-                    break;
-                case 'Caja de valvulas doble':
-                    return {
-                pane: 'pane_220224_Valvulas_13',
-        rotationAngle: 0.0,
-        rotationOrigin: 'center center',
-        icon: L.icon({
-            iconUrl: 'markers/Valvulas.svg',
-            iconSize: [38.0, 38.0]
-        }),
-                interactive: true,
-            }
-                    break;
-                case 'Caja de valvulas inundada':
-                    return {
-                pane: 'pane_220224_Valvulas_13',
-        rotationAngle: 0.0,
-        rotationOrigin: 'center center',
-        icon: L.icon({
-            iconUrl: 'markers/Valvulas.svg',
-            iconSize: [38.0, 38.0]
-        }),
-                interactive: true,
-            }
-                    break;
-                case 'Caja de valvulas obsoleta':
-                    return {
-                pane: 'pane_220224_Valvulas_13',
-        rotationAngle: 0.0,
-        rotationOrigin: 'center center',
-        icon: L.icon({
-            iconUrl: 'markers/Valvulas.svg',
-            iconSize: [38.0, 38.0]
-        }),
-                interactive: true,
-            }
-                    break;
-                case 'Caja valvulas de 3" P.V.C':
-                    return {
-                pane: 'pane_220224_Valvulas_13',
-        rotationAngle: 0.0,
-        rotationOrigin: 'center center',
-        icon: L.icon({
-            iconUrl: 'markers/Valvulas.svg',
-            iconSize: [38.0, 38.0]
-        }),
-                interactive: true,
-            }
-                    break;
-                default:
-                    return {
-                pane: 'pane_220224_Valvulas_13',
-        rotationAngle: 0.0,
-        rotationOrigin: 'center center',
-        icon: L.icon({
-            iconUrl: 'markers/Valvulas.svg',
-            iconSize: [38.0, 38.0]
-        }),
-                interactive: true,
-            }
-                    break;
             }
         }
-        map.createPane('pane_220224_Valvulas_13');
-        map.getPane('pane_220224_Valvulas_13').style.zIndex = 413;
-        map.getPane('pane_220224_Valvulas_13').style['mix-blend-mode'] = 'normal';
-        var layer_220224_Valvulas_13 = new L.geoJson(json_220224_Valvulas_13, {
+        map.createPane('pane_220227_Valvulas_13');
+        map.getPane('pane_220227_Valvulas_13').style.zIndex = 413;
+        map.getPane('pane_220227_Valvulas_13').style['mix-blend-mode'] = 'normal';
+        var layer_220227_Valvulas_13 = new L.geoJson(json_220227_Valvulas_13, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_220224_Valvulas_13',
-            layerName: 'layer_220224_Valvulas_13',
-            pane: 'pane_220224_Valvulas_13',
-            onEachFeature: pop_220224_Valvulas_13,
+            dataVar: 'json_220227_Valvulas_13',
+            layerName: 'layer_220227_Valvulas_13',
+            pane: 'pane_220227_Valvulas_13',
+            onEachFeature: pop_220227_Valvulas_13,
             pointToLayer: function (feature, latlng) {
                 var context = {
                     feature: feature,
                     variables: {}
                 };
-                return L.marker(latlng, style_220224_Valvulas_13_0(feature));
+                return L.marker(latlng, style_220227_Valvulas_13_0(feature));
             },
         });
-        bounds_group.addLayer(layer_220224_Valvulas_13);
-        var osmGeocoder = new L.Control.Geocoder({
-            collapsed: true,
-            position: 'topleft',
-            text: 'Search',
-            title: 'Testing'
-        }).addTo(map);
-        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
-        .className += ' fa fa-search';
-        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
-        .title += 'Search for a place';
+        bounds_group.addLayer(layer_220227_Valvulas_13);
+        function pop_220227_Fotografias_14(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>ID</strong><br />' + (feature.properties['ID'] !== null ? autolinker.link(feature.properties['ID'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Descripci�</strong><br />' + (feature.properties['Descripci�'] !== null ? autolinker.link(feature.properties['Descripci�'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Latitud'] !== null ? autolinker.link(feature.properties['Latitud'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Longitud'] !== null ? autolinker.link(feature.properties['Longitud'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Elev'] !== null ? autolinker.link(feature.properties['Elev'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Imagen</strong><br />' + (feature.properties['Imagen'] !== null ? autolinker.link(feature.properties['Imagen'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_220227_Fotografias_14_0() {
+            return {
+                pane: 'pane_220227_Fotografias_14',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/shopping_photo.svg',
+            iconSize: [14.440000000000005, 14.440000000000005]
+        }),
+                interactive: true,
+            }
+        }
+        map.createPane('pane_220227_Fotografias_14');
+        map.getPane('pane_220227_Fotografias_14').style.zIndex = 414;
+        map.getPane('pane_220227_Fotografias_14').style['mix-blend-mode'] = 'normal';
+        var layer_220227_Fotografias_14 = new L.geoJson(json_220227_Fotografias_14, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_220227_Fotografias_14',
+            layerName: 'layer_220227_Fotografias_14',
+            pane: 'pane_220227_Fotografias_14',
+            onEachFeature: pop_220227_Fotografias_14,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.marker(latlng, style_220227_Fotografias_14_0(feature));
+            },
+        });
+        var cluster_220227_Fotografias_14 = new L.MarkerClusterGroup({showCoverageOnHover: false,
+            spiderfyDistanceMultiplier: 2});
+        cluster_220227_Fotografias_14.addLayer(layer_220227_Fotografias_14);
+
+        bounds_group.addLayer(layer_220227_Fotografias_14);
+        function pop_220227_VRP_15(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>Name</strong><br />' + (feature.properties['Name'] !== null ? autolinker.link(feature.properties['Name'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_220227_VRP_15_0() {
+            return {
+                pane: 'pane_220227_VRP_15',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/blue-marker.svg',
+            iconSize: [26.60000000000001, 26.60000000000001]
+        }),
+                interactive: true,
+            }
+        }
+        map.createPane('pane_220227_VRP_15');
+        map.getPane('pane_220227_VRP_15').style.zIndex = 415;
+        map.getPane('pane_220227_VRP_15').style['mix-blend-mode'] = 'normal';
+        var layer_220227_VRP_15 = new L.geoJson(json_220227_VRP_15, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_220227_VRP_15',
+            layerName: 'layer_220227_VRP_15',
+            pane: 'pane_220227_VRP_15',
+            onEachFeature: pop_220227_VRP_15,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.marker(latlng, style_220227_VRP_15_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_220227_VRP_15);
         var baseMaps = {};
-        L.control.layers(baseMaps,{'220224_Valvulas<br /><table><tr><td style="text-align: center;"><img src="legend/220224_Valvulas_13_Cajaamarilla0.png" /></td><td>Caja amarilla</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Valvulas_13_Cajadevalvulareguladora1.png" /></td><td>Caja de valvula reguladora</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Valvulas_13_Cajadevalvulas2.png" /></td><td>Caja de valvulas</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Valvulas_13_Cajadevalvulasazolvada3.png" /></td><td>Caja de valvulas azolvada</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Valvulas_13_Cajadevalvulasde44.png" /></td><td>Caja de valvulas de 4"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Valvulas_13_Cajadevalvulasdoble5.png" /></td><td>Caja de valvulas doble</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Valvulas_13_Cajadevalvulasinundada6.png" /></td><td>Caja de valvulas inundada</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Valvulas_13_Cajadevalvulasobsoleta7.png" /></td><td>Caja de valvulas obsoleta</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Valvulas_13_Cajavalvulasde3PVC8.png" /></td><td>Caja valvulas de 3" P.V.C</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Valvulas_13_9.png" /></td><td></td></tr></table>': layer_220224_Valvulas_13,'220224_Fugas<br /><table><tr><td style="text-align: center;"><img src="legend/220224_Fugas_12_Fugadeagua0.png" /></td><td>Fuga de agua</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Fugas_12_Fugadeaguaenlineadeconduccion1.png" /></td><td>Fuga de agua en linea de conduccion</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Fugas_12_FugadeaguaenPVC122.png" /></td><td>Fuga de agua en PVC 1/2"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Fugas_12_Fugadedrenaje3.png" /></td><td>Fuga de drenaje</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Fugas_12_Fugaenlineadeagua24.png" /></td><td>Fuga en linea de agua 2"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Fugas_12_Fugaenlineadeagua35.png" /></td><td>Fuga en linea de agua 3"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Fugas_12_Fugaenreparacion6.png" /></td><td>Fuga en reparacion</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Fugas_12_Fugaentomadomiciliaria7.png" /></td><td>Fuga en toma domiciliaria</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Fugas_12_8.png" /></td><td></td></tr></table>': layer_220224_Fugas_12,'220224_Base de datos completa<br /><table><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_TconduccionFortinRiito0.png" /></td><td>"T" conduccion Fortin-Riito</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Altatension1.png" /></td><td>Alta tension</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Ampliacion68102.png" /></td><td>Ampliacion 6"-8"-10"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Antenadetelefonia3.png" /></td><td>Antena de telefonia</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Atraque4.png" /></td><td>Atraque</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Bypass5.png" /></td><td>By-pass</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_CVReguladora6.png" /></td><td>C.V. Reguladora</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Cajaamarilla7.png" /></td><td>Caja amarilla</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Cajadevalvulareguladora8.png" /></td><td>Caja de valvula reguladora</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Cajadevalvulas9.png" /></td><td>Caja de valvulas</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Cajadevalvulasazolvada10.png" /></td><td>Caja de valvulas azolvada</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Cajadevalvulasde411.png" /></td><td>Caja de valvulas de 4"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Cajadevalvulasdoble12.png" /></td><td>Caja de valvulas doble</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Cajadevalvulasinundada13.png" /></td><td>Caja de valvulas inundada</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Cajadevalvulasobsoleta14.png" /></td><td>Caja de valvulas obsoleta</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Cajavalvulasde3PVC15.png" /></td><td>Caja valvulas de 3" P.V.C</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Calle16.png" /></td><td>Calle</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Cambiodediametro17.png" /></td><td>Cambio de diametro</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Cambiodematerialdeconduccionojodeaguadefibradevidrioafierroycambiodediametrode18a1618.png" /></td><td>Cambio de material de conduccion ojo de agua de fibra de vidrio a fierro y cambio de diametro de 18" a 16</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Centrodecalle19.png" /></td><td>Centro de calle</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_CentrodeCalle20.png" /></td><td>Centro de Calle</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Colectorpluvial21.png" /></td><td>Colector pluvial</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Conduccionalfortin22.png" /></td><td>Conduccion al fortin</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Conduccionalfortincancelada23.png" /></td><td>Conduccion al fortin cancelada</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Conduccionalsectorhidrometrico2824.png" /></td><td>Conduccion al sector hidrometrico 28</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Conduccionojodeagua25.png" /></td><td>Conduccion ojo de agua</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_ConduccionRioSanPedro26.png" /></td><td>Conduccion Rio San Pedro</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Conexion27.png" /></td><td>Conexion</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Conexionde1a3428.png" /></td><td>Conexion de 1" a 3/4"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Conexionde4a329.png" /></td><td>Conexion de 4" a 3"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Conexiondefofoapvc330.png" /></td><td>Conexion de fofo a pvc 3"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Conexiones31.png" /></td><td>Conexiones</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_ConexindePVC112aFoFo11232.png" /></td><td>Conexi�n de PVC 1 1/2" a FoFo 1 1/2"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Cuartelesquina33.png" /></td><td>Cuartel esquina</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Descargasanitaria34.png" /></td><td>Descarga sanitaria</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Descargasanitaria435.png" /></td><td>Descarga sanitaria 4"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Dren36.png" /></td><td>Dren</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Drenaje37.png" /></td><td>Drenaje</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Drenajedaado38.png" /></td><td>Drenaje da�ado</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Drenajepluvial39.png" /></td><td>Drenaje pluvial</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Drenajesanitario40.png" /></td><td>Drenaje sanitario</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Equipodemedicion41.png" /></td><td>Equipo de medicion</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Escalinata42.png" /></td><td>Escalinata</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Excavacion43.png" /></td><td>Excavacion</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Finadecalle44.png" /></td><td>Fina de calle</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Fugadeagua45.png" /></td><td>Fuga de agua</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Fugadeaguaenlineadeconduccion46.png" /></td><td>Fuga de agua en linea de conduccion</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_FugadeaguaenPVC1247.png" /></td><td>Fuga de agua en PVC 1/2"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Fugadedrenaje48.png" /></td><td>Fuga de drenaje</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Fugaenlineadeagua249.png" /></td><td>Fuga en linea de agua 2"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Fugaenlineadeagua350.png" /></td><td>Fuga en linea de agua 3"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Fugaenreparacion51.png" /></td><td>Fuga en reparacion</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Fugaentomadomiciliaria52.png" /></td><td>Fuga en toma domiciliaria</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Gas53.png" /></td><td>Gas</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_GAs54.png" /></td><td>GAs</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Gasmedidor55.png" /></td><td>Gas medidor</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Gasnatural56.png" /></td><td>Gas natural</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Guarnicion57.png" /></td><td>Guarnicion</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Hidrante58.png" /></td><td>Hidrante</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_HidranteFS59.png" /></td><td>Hidrante F.S</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_IntersecciondepozoNo108alineadeconducciona1260.png" /></td><td>Interseccion de pozo No. 10, 8" a linea de conduccion a 12"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_IntersecciondepozoNo28alineadeconduccionna1261.png" /></td><td>Interseccion de pozo No. 2, 8" a linea de conduccionn a 12"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_IntersecciondepozoNo3BIS6alineadeconducciona1262.png" /></td><td>Interseccion de pozo No. 3 BIS, 6" a linea de conduccion a 12"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_IntersecciondepozoNo58alineadeconducciona1263.png" /></td><td>Interseccion de pozo No. 5, 8" a linea de conduccion a 12"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_IntersecciondepozoNo9BIS4alineadeconducciona1264.png" /></td><td>Interseccion de pozo No. 9 BIS, 4" a linea de conduccion a 12"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_InterseccionpozoNo74alineadeconducciona1265.png" /></td><td>Interseccion pozo No. 7, 4" a linea de conduccion a 12"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_LegadaRiito66.png" /></td><td>Legada Riito</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Linea467.png" /></td><td>Linea 4"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_LineaConduccion68.png" /></td><td>Linea Conduccion</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_LineaConduccion1669.png" /></td><td>Linea Conduccion 16"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Lineaconducciondefibra1870.png" /></td><td>Linea conduccion de fibra 18"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Lineaconducciondefibrafinal1871.png" /></td><td>Linea conduccion de fibra final 18"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Lineaconducciondefibrainicio1872.png" /></td><td>Linea conduccion de fibra inicio 18"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Lineade11273.png" /></td><td>Linea de 1 1/2"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Lineade174.png" /></td><td>Linea de 1"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Lineade1275.png" /></td><td>Linea de 12"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Lineade476.png" /></td><td>Linea de 4"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Lineadeagua77.png" /></td><td>Linea de agua</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Lineadeagua11278.png" /></td><td>Linea de agua 1 1/2"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Lineadeaguade279.png" /></td><td>Linea de agua de 2"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Lineadeaguaenvialidad80.png" /></td><td>Linea de agua en vialidad</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Lineadeconduccion81.png" /></td><td>Linea de conduccion</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Lineadeconduccion1082.png" /></td><td>Linea de conduccion 10"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Lineadeconduccion1283.png" /></td><td>Linea de conduccion 12"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Lineadeconduccion1684.png" /></td><td>Linea de conduccion 16"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Lineadeconduccion2FoFo85.png" /></td><td>Linea de conduccion 2" FoFo</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Lineadeconduccion2PVC86.png" /></td><td>Linea de conduccion 2"PVC</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Lineadeconduccion34galv87.png" /></td><td>Linea de conduccion 3/4" galv</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Lineadeconduccion34PVC88.png" /></td><td>Linea de conduccion 3/4" PVC</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_LineadeconduccionGas89.png" /></td><td>Linea de conduccion Gas</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_LineadeconduccionPVC290.png" /></td><td>Linea de conduccion PVC 2"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_LineadedistribicionparatomassobrecarreteraRioSonora91.png" /></td><td>Linea de distribicion para tomas sobre carretera Rio Sonora</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Lineadedrenaje92.png" /></td><td>Linea de drenaje</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Lineadefierrode193.png" /></td><td>Linea de fierro de 1"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Lineadegas94.png" /></td><td>Linea de gas</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_LineadegasFS95.png" /></td><td>Linea de gas F.S</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_LineadePVC11296.png" /></td><td>Linea de PVC 1 1/2"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Lineadeconduccion97.png" /></td><td>Linea deconduccion</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_LineaPVC3498.png" /></td><td>Linea P.V.C. 3/4"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Lineapozo1299.png" /></td><td>Linea pozo 1-2</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Lineapozo23100.png" /></td><td>Linea pozo 2-3</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Lineapozo34101.png" /></td><td>Linea pozo 3-4</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_LineaPVC112102.png" /></td><td>Linea PVC 1 1/2"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_LineaPVC1103.png" /></td><td>Linea PVC 1"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_LineaPVC2104.png" /></td><td>Linea PVC 2"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Lotevaldio105.png" /></td><td>Lote valdio</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_MF106.png" /></td><td>M.F</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Mallaperimetral107.png" /></td><td>Malla perimetral</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Manometro108.png" /></td><td>Manometro</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Medidordeflujo109.png" /></td><td>Medidor de flujo</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Medidordeflujoojodeagua110.png" /></td><td>Medidor de flujo ojo de agua</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_PA111.png" /></td><td>PA.</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Paramento112.png" /></td><td>Paramento</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Perdidadepresion113.png" /></td><td>Perdida de presion</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Perimetrodetanque114.png" /></td><td>Perimetro de tanque</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_PosibleValvula115.png" /></td><td>Posible Valvula</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Poste116.png" /></td><td>Poste</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_PosteCFE117.png" /></td><td>Poste CFE</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Postedealumbrado118.png" /></td><td>Poste de alumbrado</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Postedeluz119.png" /></td><td>Poste de luz</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Pozo3alineaprincipal120.png" /></td><td>Pozo 3 a linea principal</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Pozo4alineaprincipal121.png" /></td><td>Pozo 4 a linea principal</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Pozodevisita122.png" /></td><td>Pozo de visita</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Reduccionavalvula10123.png" /></td><td>Reduccion a valvula 10"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Reducciondeconduccionojodeagua16a12124.png" /></td><td>Reduccion de conduccion ojo de agua 16" a 12"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Reductordepresion125.png" /></td><td>Reductor de presion</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Registro126.png" /></td><td>Registro</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Registroalumbrado127.png" /></td><td>Registro alumbrado</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_RegistroCFE128.png" /></td><td>Registro CFE</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Registropluvial129.png" /></td><td>Registro pluvial</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Registrosanitario130.png" /></td><td>Registro sanitario</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_RegistroTelmex131.png" /></td><td>Registro Telmex</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Reparacion132.png" /></td><td>Reparacion</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Salidapozo2133.png" /></td><td>Salida pozo 2</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_SalidaPozoNo1Ampliacionde6810134.png" /></td><td>Salida Pozo No.1, Ampliacion de 6"-8"-10"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_SalidaPozoNo108135.png" /></td><td>Salida Pozo No.10, 8"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_SalidaPozoNo116136.png" /></td><td>Salida Pozo No.11, 6"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_SalidaPozoNo28137.png" /></td><td>Salida Pozo No.2, 8"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_SalidaPozoNo36138.png" /></td><td>Salida Pozo No.3, 6"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_SalidaPozoNo48139.png" /></td><td>Salida Pozo No.4, 8"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_SalidaPozoNo68140.png" /></td><td>Salida Pozo No.6, 8"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_SalidaPozoNo74141.png" /></td><td>Salida Pozo No.7, 4"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_SalidaPozoNo88142.png" /></td><td>Salida Pozo No.8, 8"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_SalidaPozoNo9BIS4143.png" /></td><td>Salida Pozo No.9 BIS, 4"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Sealamientodetuberiadegas144.png" /></td><td>Se�alamiento de tuberia de gas</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Toma112a12PVC145.png" /></td><td>Toma 1 1/2" a 1/2" PVC</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Tomaagua1146.png" /></td><td>Toma agua 1"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Tomaalimentacion147.png" /></td><td>Toma alimentacion</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Tomadeagua112148.png" /></td><td>Toma de agua 1 1/2"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Tomadeagua4a12149.png" /></td><td>Toma de agua 4" a 1/2"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_TomadeaguaNV150.png" /></td><td>Toma de agua N.V</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_TomadeaguaNV151.png" /></td><td>Toma de agua N.V.</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_TomadeaguaNV152.png" /></td><td>Toma de agua NV</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Tomadegas153.png" /></td><td>Toma de gas</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_TomadegasFS154.png" /></td><td>Toma de gas F.S</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Tomadentrodeterreno155.png" /></td><td>Toma dentro de terreno</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Tomadomiciliaria156.png" /></td><td>Toma domiciliaria</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Tomadomiciliariaazolvada157.png" /></td><td>Toma domiciliaria azolvada</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Tomadomiciliariaclausurada158.png" /></td><td>Toma domiciliaria clausurada</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Tomadomiciliariaenproceso159.png" /></td><td>Toma domiciliaria en proceso</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_TomadomiciliariaFS160.png" /></td><td>Toma domiciliaria F.S</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_TomadomiciliariaNV161.png" /></td><td>Toma domiciliaria NV</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Transformador162.png" /></td><td>Transformador</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Tuberia163.png" /></td><td>Tuberia</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Tuberiade112164.png" /></td><td>Tuberia de 1 1/2"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Tuberiade12165.png" /></td><td>Tuberia de 12"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Tuberiade16166.png" /></td><td>Tuberia de 16"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Tuberiade2167.png" /></td><td>Tuberia de 2"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Tuberiade3168.png" /></td><td>Tuberia de 3"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Tuberiade4169.png" /></td><td>Tuberia de 4"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Tuberiadeasbesto170.png" /></td><td>Tuberia de asbesto</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Tuberiadefierro2171.png" /></td><td>Tuberia de fierro 2"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Tuberiadefierrode1172.png" /></td><td>Tuberia de fierro de 1"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Tuberiadegas173.png" /></td><td>Tuberia de gas</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_TuberiadePVC3174.png" /></td><td>Tuberia de PVC 3"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_TuberiadePVC8175.png" /></td><td>Tuberia de PVC 8"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Unionpozo2alineaprincipal176.png" /></td><td>Union pozo 2 a linea principal</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_VRPde4177.png" /></td><td>V.R.P de 4"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Valdio178.png" /></td><td>Valdio</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Valvula179.png" /></td><td>Valvula</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Valvula8180.png" /></td><td>Valvula 8"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Valvulaconduccionojodeagua181.png" /></td><td>Valvula conduccion ojo de agua</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Valvulade12182.png" /></td><td>Valvula de 12"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Valvulade2expuesta183.png" /></td><td>Valvula de 2" expuesta</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Valvuladedesfoge3184.png" /></td><td>Valvula de desfoge 3"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Valvuladeexpulsiondeaire3185.png" /></td><td>Valvula de expulsion de aire 3"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Valvuladeexpulsiondeaireojodeagua186.png" /></td><td>Valvula de expulsion de aire ojo de agua</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Valvuladepaso187.png" /></td><td>Valvula de paso</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_ValvuladePVCde4188.png" /></td><td>Valvula de PVC de 4"</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Valvulaexpuesta189.png" /></td><td>Valvula expuesta</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Valvulalineadedistribucion190.png" /></td><td>Valvula linea de distribucion</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_Vialidad191.png" /></td><td>Vialidad</td></tr><tr><td style="text-align: center;"><img src="legend/220224_Basededatoscompleta_11_192.png" /></td><td></td></tr></table>': layer_220224_Basededatoscompleta_11,'<img src="legend/220224_Fotos_10.png" /> 220224_Fotos': layer_220224_Fotos_10,'<img src="legend/Sistemasdepozos_9.png" /> Sistemas de pozos': layer_Sistemasdepozos_9,'<img src="legend/Tanques_8.png" /> Tanques': layer_Tanques_8,'<img src="legend/Lineasdeconduccion_7.png" /> Lineas de conduccion': layer_Lineasdeconduccion_7,'<img src="legend/Sectoreshidrometricos_6.png" /> Sectores hidrometricos': layer_Sectoreshidrometricos_6,'<img src="legend/Carreteras_5.png" /> Carreteras': layer_Carreteras_5,'<img src="legend/Viasferreas_4.png" /> Vias ferreas': layer_Viasferreas_4,'<img src="legend/Zonaurbana_3.png" /> Zona urbana': layer_Zonaurbana_3,'<img src="legend/Cananea_2.png" /> Cananea': layer_Cananea_2,"Google maps": layer_Googlemaps_1,"Google satelite": layer_Googlesatelite_0,}).addTo(map);L.control.scale({position: 'bottomleft', maxWidth: 100, metric: true, imperial: false, updateWhenIdle: false}).addTo(map);
+        L.control.layers(baseMaps,{'<img src="legend/220227_VRP_15.png" /> 220227_VRP': layer_220227_VRP_15,'<img src="legend/220227_Fotografias_14.png" /> 220227_Fotografias': cluster_220227_Fotografias_14,'<img src="legend/220227_Valvulas_13.png" /> 220227_Valvulas': layer_220227_Valvulas_13,'<img src="legend/220227_Fugas_12.png" /> 220227_Fugas': layer_220227_Fugas_12,'<img src="legend/220227_Cajadevalvulas_11.png" /> 220227_Caja de valvulas': layer_220227_Cajadevalvulas_11,'<img src="legend/220227_Tomasdomiciliarias_10.png" /> 220227_Tomas domiciliarias': cluster_220227_Tomasdomiciliarias_10,'<img src="legend/Sistemasdepozos_9.png" /> Sistemas de pozos': layer_Sistemasdepozos_9,'<img src="legend/Tanques_8.png" /> Tanques': layer_Tanques_8,'<img src="legend/Lineasdeconduccion_7.png" /> Lineas de conduccion': layer_Lineasdeconduccion_7,'<img src="legend/Sectoreshidrometricos_6.png" /> Sectores hidrometricos': layer_Sectoreshidrometricos_6,'<img src="legend/Carreteras_5.png" /> Carreteras': layer_Carreteras_5,'<img src="legend/Viasferreas_4.png" /> Vias ferreas': layer_Viasferreas_4,'<img src="legend/Zonaurbana_3.png" /> Zona urbana': layer_Zonaurbana_3,'<img src="legend/Cananea_2.png" /> Cananea': layer_Cananea_2,"Google maps": layer_Googlemaps_1,"Google satelite": layer_Googlesatelite_0,}).addTo(map);L.control.scale({position: 'bottomleft', maxWidth: 100, metric: true, imperial: false, updateWhenIdle: false}).addTo(map);
         setBounds();
         var i = 0;
         layer_Sectoreshidrometricos_6.eachLayer(function(layer) {
@@ -4164,13 +895,6 @@
               addLabel(layer, i);
               i++;
         });
-        map.addControl(new L.Control.Search({
-            layer: layer_220224_Basededatoscompleta_11,
-            initial: false,
-            hideMarkerOnCollapse: true,
-            propertyName: 'Descripci�'}));
-        document.getElementsByClassName('search-button')[0].className +=
-         ' fa fa-binoculars';
         resetLabels([layer_Cananea_2,layer_Sectoreshidrometricos_6]);
         map.on("zoomend", function(){
             resetLabels([layer_Cananea_2,layer_Sectoreshidrometricos_6]);
